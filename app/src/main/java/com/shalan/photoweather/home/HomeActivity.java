@@ -10,7 +10,8 @@ import com.shalan.photoweather.home.camera.CameraFragment;
 
 import butterknife.ButterKnife;
 
-public class HomeActivity extends BaseActivity implements HomeViewInteractor {
+public class HomeActivity extends BaseActivity implements HomeViewInteractor
+        , CameraFragment.OnFragmentInteractionListener {
 
     private HomePresenter<HomeViewInteractor> presenter;
 

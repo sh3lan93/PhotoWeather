@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.shalan.photoweather.PhotoWeatherApp;
 import com.shalan.photoweather.R;
@@ -21,11 +22,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class CameraFragment extends BaseFragment implements CameraViewInteractor, AskForPermission.PermissionResultListener, AppDialogs.PermissionExplanationDialogListener {
+public class CameraFragment extends BaseFragment implements CameraViewInteractor
+        , AskForPermission.PermissionResultListener, AppDialogs.PermissionExplanationDialogListener {
 
     public static final String TAG = CameraFragment.class.getSimpleName();
     @BindView(R.id.cameraPreview)
     TextureView cameraPreview;
+    @BindView(R.id.cautionMessage)
+    TextView cautionMessage;
+
     private OnFragmentInteractionListener mListener;
     private CameraPresenter<CameraViewInteractor> presenter;
 
@@ -47,6 +52,15 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_camera, container, false);
+    }
+
+    private void showCautionMessage(int permissionID){
+        cameraPreview.setVisibility(View.GONE);
+        cautionMessage.setVisibility(View.VISIBLE);
+        if (permissionID == AskForPermission.CAMERA_PERMISSION)
+            cautionMessage.setText(R.string.camera_permission_caution_message);
+        else if (permissionID == AskForPermission.EXTERNAL_STORAGE_PERMISSION)
+            cautionMessage.setText(R.string.external_storage_permission_caution_message);
     }
 
     @Override
@@ -88,7 +102,7 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
     /*listener fired from permission request*/
     @Override
     public void onPermissionDenied(int permissionID) {
-
+        showCautionMessage(permissionID);
     }
 
     /*listener fired from permission dialog*/
@@ -100,7 +114,7 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
     /*listener fired from permission dialog*/
     @Override
     public void onDeniedClicked(int permissionID) {
-
+        showCautionMessage(permissionID);
     }
 
     @Override

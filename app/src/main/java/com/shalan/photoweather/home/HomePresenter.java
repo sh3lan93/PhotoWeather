@@ -8,4 +8,9 @@ public class HomePresenter<V extends HomeViewInteractor> extends BasePresenter<V
     public HomePresenter(AppDataManager dataManager, V baseViewInteractor) {
         super(dataManager, baseViewInteractor);
     }
+
+    @Override
+    public void initialStart() {
+        getBaseViewInteractor().openCameraFragment();
+    }
 }

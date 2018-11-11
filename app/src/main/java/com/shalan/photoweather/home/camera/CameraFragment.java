@@ -22,6 +22,8 @@ import butterknife.ButterKnife;
 
 
 public class CameraFragment extends BaseFragment implements CameraViewInteractor, AskForPermission.PermissionResultListener, AppDialogs.PermissionExplanationDialogListener {
+
+    public static final String TAG = CameraFragment.class.getSimpleName();
     @BindView(R.id.cameraPreview)
     TextureView cameraPreview;
     private OnFragmentInteractionListener mListener;

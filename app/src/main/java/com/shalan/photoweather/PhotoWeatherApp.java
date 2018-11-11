@@ -11,5 +11,10 @@ public class PhotoWeatherApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        dataManager = new AppDataManager(this);
+    }
+
+    public AppDataManager getDataManager() {
+        return dataManager;
     }
 }

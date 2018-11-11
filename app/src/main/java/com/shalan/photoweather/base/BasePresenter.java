@@ -6,7 +6,7 @@ public class BasePresenter<V extends BaseViewInteractor> implements BasePresente
     private V baseViewInteractor;
     private AppDataManager dataManager;
 
-    public BasePresenter(V baseViewInteractor, AppDataManager dataManager) {
+    public BasePresenter(AppDataManager dataManager, V baseViewInteractor) {
         this.baseViewInteractor = baseViewInteractor;
         this.dataManager = dataManager;
     }

@@ -8,21 +8,22 @@ import com.shalan.photoweather.R;
 
 public class AppDialogs {
 
-    public static void showPermissionExplanationDialog(Context context, int message, final PermissionExplanationDialogListener listener){
+    public static void showPermissionExplanationDialog(Context context, int message, final int permissionID
+            , final PermissionExplanationDialogListener listener){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.permission_dialog_title);
         builder.setMessage(message);
         builder.setPositiveButton(R.string.grant_permission, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                listener.onGrantClicked();
+                listener.onGrantClicked(permissionID);
                 dialog.dismiss();
             }
         });
         builder.setNegativeButton(R.string.denied_permission, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                listener.onDeniedClicked();
+                listener.onDeniedClicked(permissionID);
                 dialog.dismiss();
             }
         });
@@ -32,7 +33,7 @@ public class AppDialogs {
     }
 
     public interface PermissionExplanationDialogListener{
-        void onGrantClicked();
-        void onDeniedClicked();
+        void onGrantClicked(int permissionID);
+        void onDeniedClicked(int permissionID);
     }
 }

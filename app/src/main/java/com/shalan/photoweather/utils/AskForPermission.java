@@ -54,10 +54,12 @@ public class AskForPermission {
             if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
                 switch (permissionID) {
                     case CAMERA_PERMISSION:
-                        AppDialogs.showPermissionExplanationDialog(activity, R.string.camera_permission_message, permissionDialogListener);
+                        AppDialogs.showPermissionExplanationDialog(activity
+                                , R.string.camera_permission_message, permissionID, permissionDialogListener);
                         break;
                     case EXTERNAL_STORAGE_PERMISSION:
-                        AppDialogs.showPermissionExplanationDialog(activity, R.string.external_storage_permission_message, permissionDialogListener);
+                        AppDialogs.showPermissionExplanationDialog(activity
+                                , R.string.external_storage_permission_message, permissionID, permissionDialogListener);
                         break;
                 }
             } else {
@@ -73,12 +75,12 @@ public class AskForPermission {
                 }
             }
         } else {
-            permissionListener.onPermissionGranted();
+            permissionListener.onPermissionGranted(permissionID);
         }
     }
 
     public interface PermissionResultListener {
-        void onPermissionGranted();
-        void onPermissionDenied();
+        void onPermissionGranted(int permissionID);
+        void onPermissionDenied(int permissionID);
     }
 }

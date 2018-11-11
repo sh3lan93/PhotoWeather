@@ -8,4 +8,9 @@ public class CameraPresenter<V extends CameraViewInteractor> extends BasePresent
     public CameraPresenter(AppDataManager dataManager, V baseViewInteractor) {
         super(dataManager, baseViewInteractor);
     }
+
+    @Override
+    public void checkCameraPermission() {
+        getBaseViewInteractor().askForCameraPermission();
+    }
 }

@@ -1,11 +1,10 @@
 package com.shalan.photoweather.home.camera;
 
 import android.content.Context;
-import android.net.Uri;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
@@ -15,17 +14,18 @@ import com.shalan.photoweather.PhotoWeatherApp;
 import com.shalan.photoweather.R;
 import com.shalan.photoweather.base.BaseFragment;
 import com.shalan.photoweather.data.AppDataManager;
+import com.shalan.photoweather.utils.AppDialogs;
+import com.shalan.photoweather.utils.AskForPermission;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class CameraFragment extends BaseFragment implements CameraViewInteractor{
-    private OnFragmentInteractionListener mListener;
-     private CameraPresenter<CameraViewInteractor> presenter;
-
-     @BindView(R.id.cameraPreview)
+public class CameraFragment extends BaseFragment implements CameraViewInteractor, AskForPermission.PermissionResultListener, AppDialogs.PermissionExplanationDialogListener {
+    @BindView(R.id.cameraPreview)
     TextureView cameraPreview;
+    private OnFragmentInteractionListener mListener;
+    private CameraPresenter<CameraViewInteractor> presenter;
 
     public CameraFragment() {
         // Required empty public constructor
@@ -51,6 +51,7 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
         initPresenter();
+        presenter.checkCameraPermission();
     }
 
     @Override
@@ -72,8 +73,58 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
 
     @Override
     protected void initPresenter() {
-        AppDataManager dataManager = ((PhotoWeatherApp)getContext().getApplicationContext()).getDataManager();
+        AppDataManager dataManager = ((PhotoWeatherApp) getContext().getApplicationContext()).getDataManager();
         presenter = new CameraPresenter<CameraViewInteractor>(dataManager, this);
+    }
+
+    /*listener fired from permission request*/
+    @Override
+    public void onPermissionGranted(int permissionID) {
+
+    }
+
+    /*listener fired from permission request*/
+    @Override
+    public void onPermissionDenied(int permissionID) {
+
+    }
+
+    /*listener fired from permission dialog*/
+    @Override
+    public void onGrantClicked(int permissionID) {
+
+    }
+
+    /*listener fired from permission dialog*/
+    @Override
+    public void onDeniedClicked(int permissionID) {
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case AskForPermission.CAMERA_PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    onPermissionGranted(AskForPermission.CAMERA_PERMISSION);
+                }else{
+                    onPermissionDenied(AskForPermission.CAMERA_PERMISSION);
+                }
+                break;
+            case AskForPermission.EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    onPermissionGranted(AskForPermission.CAMERA_PERMISSION);
+                }else{
+                    onPermissionDenied(AskForPermission.CAMERA_PERMISSION);
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void askForCameraPermission() {
+        AskForPermission.getInstance(getActivity(), this, this)
+                .requestPermission(AskForPermission.CAMERA_PERMISSION);
     }
 
     public interface OnFragmentInteractionListener {

@@ -18,6 +18,7 @@ public class HomeActivity extends BaseActivity implements HomeViewInteractor
         , CameraFragment.OnFragmentInteractionListener {
 
     private HomePresenter<HomeViewInteractor> presenter;
+    private Fragment mFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,8 +26,9 @@ public class HomeActivity extends BaseActivity implements HomeViewInteractor
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
         initPresenter();
-        if (savedInstanceState == null)
+        if (savedInstanceState == null) {
             presenter.initialStart();
+        }
     }
 
     @Override
@@ -40,6 +42,13 @@ public class HomeActivity extends BaseActivity implements HomeViewInteractor
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.container, new CameraFragment(), CameraFragment.TAG)
                 .addToBackStack(HomeActivity.class.getSimpleName()).commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 1){
+            finish();
+        }
     }
 
     @Override

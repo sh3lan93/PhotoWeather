@@ -1,4 +1,12 @@
 package com.shalan.photoweather.data;
 
-public class AppDataManager {
+import android.content.Context;
+
+public class AppDataManager implements AppDataManagerInteractor{
+
+    private Context context;
+
+    public AppDataManager(Context context) {
+        this.context = context;
+    }
 }

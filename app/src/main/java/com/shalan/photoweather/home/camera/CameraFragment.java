@@ -10,14 +10,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.shalan.photoweather.PhotoWeatherApp;
 import com.shalan.photoweather.R;
 import com.shalan.photoweather.base.BaseFragment;
+import com.shalan.photoweather.data.AppDataManager;
 
 import butterknife.ButterKnife;
 
 
-public class CameraFragment extends BaseFragment {
+public class CameraFragment extends BaseFragment implements CameraViewInteractor{
     private OnFragmentInteractionListener mListener;
+     private CameraPresenter<CameraViewInteractor> presenter;
 
     public CameraFragment() {
         // Required empty public constructor
@@ -42,6 +45,7 @@ public class CameraFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
+        initPresenter();
     }
 
     @Override
@@ -63,7 +67,8 @@ public class CameraFragment extends BaseFragment {
 
     @Override
     protected void initPresenter() {
-
+        AppDataManager dataManager = ((PhotoWeatherApp)getContext().getApplicationContext()).getDataManager();
+        presenter = new CameraPresenter<CameraViewInteractor>(dataManager, this);
     }
 
     public interface OnFragmentInteractionListener {

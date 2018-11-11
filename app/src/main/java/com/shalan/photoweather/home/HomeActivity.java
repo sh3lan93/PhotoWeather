@@ -8,6 +8,8 @@ import com.shalan.photoweather.R;
 import com.shalan.photoweather.base.BaseActivity;
 import com.shalan.photoweather.data.AppDataManager;
 
+import butterknife.ButterKnife;
+
 public class HomeActivity extends BaseActivity implements HomeViewInteractor{
 
     private HomePresenter<HomeViewInteractor> presenter;
@@ -16,6 +18,7 @@ public class HomeActivity extends BaseActivity implements HomeViewInteractor{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        ButterKnife.bind(this);
         initPresenter();
     }
 

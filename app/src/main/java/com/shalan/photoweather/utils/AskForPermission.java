@@ -63,19 +63,23 @@ public class AskForPermission {
                         break;
                 }
             } else {
-                switch (permissionID) {
-                    case CAMERA_PERMISSION:
-                        ActivityCompat.requestPermissions(activity, new String[]{CAMERA_MANIFEST_PERMISSION}
-                                , CAMERA_PERMISSION_REQUEST_CODE);
-                        break;
-                    case EXTERNAL_STORAGE_PERMISSION:
-                        ActivityCompat.requestPermissions(activity, new String[]{EXTERNAL_STORAGE_MANIFEST_PERMISSION}
-                                , EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE);
-                        break;
-                }
+                forceRequestPermission(permissionID);
             }
         } else {
             permissionListener.onPermissionGranted(permissionID);
+        }
+    }
+
+    public void forceRequestPermission(int permissionID) {
+        switch (permissionID) {
+            case CAMERA_PERMISSION:
+                ActivityCompat.requestPermissions(activity, new String[]{CAMERA_MANIFEST_PERMISSION}
+                        , CAMERA_PERMISSION_REQUEST_CODE);
+                break;
+            case EXTERNAL_STORAGE_PERMISSION:
+                ActivityCompat.requestPermissions(activity, new String[]{EXTERNAL_STORAGE_MANIFEST_PERMISSION}
+                        , EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE);
+                break;
         }
     }
 

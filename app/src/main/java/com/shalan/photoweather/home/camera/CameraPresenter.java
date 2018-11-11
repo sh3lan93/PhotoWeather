@@ -13,4 +13,9 @@ public class CameraPresenter<V extends CameraViewInteractor> extends BasePresent
     public void checkCameraPermission() {
         getBaseViewInteractor().askForCameraPermission();
     }
+
+    @Override
+    public void forceRequestPermission(int permissionID) {
+        getBaseViewInteractor().requestPermission(permissionID);
+    }
 }

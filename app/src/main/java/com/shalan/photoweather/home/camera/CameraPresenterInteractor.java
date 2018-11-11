@@ -4,4 +4,5 @@ import com.shalan.photoweather.base.BasePresenterInteractor;
 
 public interface CameraPresenterInteractor<V extends CameraViewInteractor> extends BasePresenterInteractor<V> {
     void checkCameraPermission();
+    void forceRequestPermission(int permissionID);
 }

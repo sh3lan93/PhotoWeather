@@ -108,7 +108,7 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
     /*listener fired from permission dialog*/
     @Override
     public void onGrantClicked(int permissionID) {
-
+        presenter.forceRequestPermission(permissionID);
     }
 
     /*listener fired from permission dialog*/
@@ -122,6 +122,12 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
     public void askForCameraPermission() {
         AskForPermission.getInstance(getActivity(), this, this)
                 .requestPermission(AskForPermission.CAMERA_PERMISSION);
+    }
+
+    @Override
+    public void requestPermission(int permission) {
+        AskForPermission.getInstance(getActivity(), this, this)
+                .forceRequestPermission(permission);
     }
 
     public interface OnFragmentInteractionListener {

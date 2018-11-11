@@ -117,25 +117,6 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
         showCautionMessage(permissionID);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case AskForPermission.CAMERA_PERMISSION_REQUEST_CODE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    onPermissionGranted(AskForPermission.CAMERA_PERMISSION);
-                }else{
-                    onPermissionDenied(AskForPermission.CAMERA_PERMISSION);
-                }
-                break;
-            case AskForPermission.EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    onPermissionGranted(AskForPermission.CAMERA_PERMISSION);
-                }else{
-                    onPermissionDenied(AskForPermission.CAMERA_PERMISSION);
-                }
-                break;
-        }
-    }
 
     @Override
     public void askForCameraPermission() {

@@ -49,6 +49,18 @@ public class AskForPermission {
         }
     }
 
+    public boolean isPermissionGranted(int permissionID) {
+        switch (permissionID) {
+            case CAMERA_PERMISSION:
+                return ContextCompat.checkSelfPermission(activity, CAMERA_MANIFEST_PERMISSION)
+                        == PackageManager.PERMISSION_GRANTED;
+            case EXTERNAL_STORAGE_PERMISSION:
+                return ContextCompat.checkSelfPermission(activity, EXTERNAL_STORAGE_MANIFEST_PERMISSION)
+                        == PackageManager.PERMISSION_GRANTED;
+        }
+        return false;
+    }
+
     private void checkPermission(String permission, int permissionID) {
         if (ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
@@ -85,6 +97,7 @@ public class AskForPermission {
 
     public interface PermissionResultListener {
         void onPermissionGranted(int permissionID);
+
         void onPermissionDenied(int permissionID);
     }
 }

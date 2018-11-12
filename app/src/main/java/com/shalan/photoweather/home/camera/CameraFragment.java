@@ -1,25 +1,13 @@
 package com.shalan.photoweather.home.camera;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.params.StreamConfigurationMap;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
-import android.util.Size;
 import android.view.LayoutInflater;
-import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,15 +20,13 @@ import com.shalan.photoweather.data.AppDataManager;
 import com.shalan.photoweather.utils.AppDialogs;
 import com.shalan.photoweather.utils.AskForPermission;
 
-import java.util.Collections;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
 public class CameraFragment extends BaseFragment implements CameraViewInteractor
         , AskForPermission.PermissionResultListener
-        , AppDialogs.PermissionExplanationDialogListener, TextureView.SurfaceTextureListener{
+        , AppDialogs.PermissionExplanationDialogListener, TextureView.SurfaceTextureListener {
 
     public static final String TAG = CameraFragment.class.getSimpleName();
     @BindView(R.id.cameraPreview)
@@ -51,16 +37,7 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
     private OnFragmentInteractionListener mListener;
     private CameraPresenter<CameraViewInteractor> presenter;
     private CameraManager mCameraManager;
-    private int mBackCamera;
-    private Size cameraPreviewSize;
-    private String mCameraID;
-    private CameraDevice.StateCallback mCameraPreviewStateCallback;
-    private HandlerThread cameraBackgroundThread;
-    private Handler cameraBackgroundHandler;
-    private CameraDevice cameraDevice;
-    private CaptureRequest.Builder captureRequestBuilder;
-    private CaptureRequest captureRequest;
-    private CameraCaptureSession cameraCaptureSession;
+    private static final int mBackCamera = 1;
 
     public CameraFragment() {
         // Required empty public constructor
@@ -89,7 +66,7 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
         presenter.checkCameraPermission();
     }
 
-    private void showCautionMessage(int permissionID){
+    private void showCautionMessage(int permissionID) {
         cameraPreview.setVisibility(View.GONE);
         cautionMessage.setVisibility(View.VISIBLE);
         if (permissionID == AskForPermission.CAMERA_PERMISSION)
@@ -98,100 +75,29 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
             cautionMessage.setText(R.string.external_storage_permission_caution_message);
     }
 
-    private void configCamera(){
-        try {
-            for (String id : mCameraManager.getCameraIdList()){
-                CameraCharacteristics camCharacteristics = mCameraManager.getCameraCharacteristics(id);
-                if (camCharacteristics.get(CameraCharacteristics.LENS_FACING) != null
-                        && camCharacteristics.get(CameraCharacteristics.LENS_FACING) == this.mBackCamera){
-                    StreamConfigurationMap streamConfigurationMap = camCharacteristics
-                            .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-                    this.cameraPreviewSize = streamConfigurationMap.getOutputSizes(SurfaceTexture.class)[0];
-                    this.mCameraID = id;
-                }
-            }
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-            Log.i(TAG, "configCamera: " + e.getLocalizedMessage());
-        }
-    }
-
-    private void configBackgroundThreadForCamera(){
-        this.cameraBackgroundThread = new HandlerThread(TAG);
-        this.cameraBackgroundThread.start();
-        this.cameraBackgroundHandler = new Handler(this.cameraBackgroundThread.getLooper());
-    }
-    @SuppressLint("MissingPermission")
-    private void startCamera(){
-        try {
-            mCameraManager.openCamera(this.mCameraID, this.mCameraPreviewStateCallback, this.cameraBackgroundHandler);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-            Log.i(TAG, "startCamera: " + e.getLocalizedMessage());
-        }
-    }
-
-    private void startPreviewSession() {
-        try {
-            SurfaceTexture surfaceTexture = cameraPreview.getSurfaceTexture();
-            surfaceTexture.setDefaultBufferSize(cameraPreviewSize.getWidth(), cameraPreviewSize.getHeight());
-            Surface previewSurface = new Surface(surfaceTexture);
-            captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-            captureRequestBuilder.addTarget(previewSurface);
-
-            cameraDevice.createCaptureSession(Collections.singletonList(previewSurface),
-                    new CameraCaptureSession.StateCallback() {
-
-                        @Override
-                        public void onConfigured(CameraCaptureSession cameraCaptureSession) {
-                            if (cameraDevice == null) {
-                                return;
-                            }
-
-                            try {
-                                captureRequest = captureRequestBuilder.build();
-                                CameraFragment.this.cameraCaptureSession = cameraCaptureSession;
-                                CameraFragment.this.cameraCaptureSession.setRepeatingRequest(captureRequest,
-                                        null, cameraBackgroundHandler);
-                            } catch (CameraAccessException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        @Override
-                        public void onConfigureFailed(CameraCaptureSession cameraCaptureSession) {
-
-                        }
-                    }, cameraBackgroundHandler);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-            Log.i(TAG, "startPreviewSession: " + e.getLocalizedMessage());
-        }
-    }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (cameraDevice != null){
-            cameraDevice.close();
-            cameraDevice = null;
-        }
-
-        if (cameraBackgroundHandler != null){
-            cameraBackgroundThread.quitSafely();
-            cameraBackgroundThread = null;
-            cameraBackgroundHandler = null;
-        }
+        presenter.closeCameraDevice();
+        presenter.quiteCameraHandler();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        configBackgroundThreadForCamera();
-        if (cameraPreview.isAvailable()){
-            configCamera();
-            startCamera();
-        }else {
+        if (cameraPreview.isAvailable()
+                && AskForPermission.getInstance(getActivity(), this, this)
+                .isPermissionGranted(AskForPermission.CAMERA_PERMISSION)) {
+            if (mCameraManager != null) {
+                presenter.configureCamera(mCameraManager, mBackCamera, cameraPreview.getSurfaceTexture());
+                presenter.startCameraStream(mCameraManager);
+            }else {
+                mCameraManager = (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE);
+                presenter.configureCamera(mCameraManager, mBackCamera, cameraPreview.getSurfaceTexture());
+                presenter.startCameraStream(mCameraManager);
+            }
+        } else {
             cameraPreview.setSurfaceTextureListener(this);
         }
     }
@@ -223,28 +129,8 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
     @Override
     public void onPermissionGranted(int permissionID) {
         /*entry point for camera*/
-        this.mCameraManager = (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE);
-        this.mBackCamera = CameraCharacteristics.LENS_FACING_BACK;
-        this.mCameraPreviewStateCallback = new CameraDevice.StateCallback(){
-
-            @Override
-            public void onOpened(@NonNull CameraDevice camera) {
-                cameraDevice = camera;
-                startPreviewSession();
-            }
-
-            @Override
-            public void onDisconnected(@NonNull CameraDevice camera) {
-                camera.close();
-                cameraDevice = null;
-            }
-
-            @Override
-            public void onError(@NonNull CameraDevice camera, int error) {
-                camera.close();
-                cameraDevice = null;
-            }
-        };
+        mCameraManager = getContext() != null
+                ? (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE) : null;
     }
 
     /*listener fired from permission request*/
@@ -280,8 +166,17 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
 
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        configCamera();
-        startCamera();
+        if (AskForPermission.getInstance(getActivity(), this, this)
+                .isPermissionGranted(AskForPermission.CAMERA_PERMISSION)) {
+            if (mCameraManager != null) {
+                presenter.configureCamera(mCameraManager, mBackCamera, cameraPreview.getSurfaceTexture());
+                presenter.startCameraStream(mCameraManager);
+            }else {
+                mCameraManager = (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE);
+                presenter.configureCamera(mCameraManager, mBackCamera, cameraPreview.getSurfaceTexture());
+                presenter.startCameraStream(mCameraManager);
+            }
+        }
     }
 
     @Override

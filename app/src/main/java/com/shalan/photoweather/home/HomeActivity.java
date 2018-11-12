@@ -46,7 +46,7 @@ public class HomeActivity extends BaseActivity implements HomeViewInteractor
 
     @Override
     public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() == 1){
+        if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
             finish();
         }
     }

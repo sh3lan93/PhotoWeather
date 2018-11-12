@@ -97,6 +97,9 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
         super.onStop();
         presenter.closeCameraDevice();
         presenter.quiteCameraHandler();
+        if (orientationEventListener != null)
+            orientationEventListener.disable();
+
     }
 
     @Override

@@ -2,12 +2,18 @@ package com.shalan.photoweather.home.camera;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.OrientationEventListener;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +45,8 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
     private CameraManager mCameraManager;
     private static final int mBackCamera = 1;
 
+    private OrientationEventListener orientationEventListener;
+
     public CameraFragment() {
         // Required empty public constructor
     }
@@ -64,6 +72,14 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
         ButterKnife.bind(this, view);
         initPresenter();
         presenter.checkCameraPermission();
+        orientationEventListener = new OrientationEventListener(getContext()) {
+            @Override
+            public void onOrientationChanged(int orientation) {
+                Log.i(TAG, "onOrientationChanged: " + orientation);
+            }
+        };
+        if (orientationEventListener.canDetectOrientation())
+            orientationEventListener.enable();
     }
 
     private void showCautionMessage(int permissionID) {
@@ -186,7 +202,7 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
 
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-        return false;
+        return true;
     }
 
     @Override

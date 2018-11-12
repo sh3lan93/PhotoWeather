@@ -17,6 +17,7 @@ import android.view.OrientationEventListener;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.shalan.photoweather.PhotoWeatherApp;
@@ -39,13 +40,15 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
     TextureView cameraPreview;
     @BindView(R.id.cautionMessage)
     TextView cautionMessage;
+    @BindView(R.id.capturePhoto)
+    ImageView capturephoto;
+    @BindView(R.id.history)
+    ImageView history;
 
     private OnFragmentInteractionListener mListener;
     private CameraPresenter<CameraViewInteractor> presenter;
     private CameraManager mCameraManager;
     private static final int mBackCamera = 1;
-
-    private OrientationEventListener orientationEventListener;
 
     public CameraFragment() {
         // Required empty public constructor
@@ -72,14 +75,6 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
         ButterKnife.bind(this, view);
         initPresenter();
         presenter.checkCameraPermission();
-        orientationEventListener = new OrientationEventListener(getContext()) {
-            @Override
-            public void onOrientationChanged(int orientation) {
-                Log.i(TAG, "onOrientationChanged: " + orientation);
-            }
-        };
-        if (orientationEventListener.canDetectOrientation())
-            orientationEventListener.enable();
     }
 
     private void showCautionMessage(int permissionID) {
@@ -97,8 +92,6 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
         super.onStop();
         presenter.closeCameraDevice();
         presenter.quiteCameraHandler();
-        if (orientationEventListener != null)
-            orientationEventListener.disable();
 
     }
 
@@ -200,7 +193,6 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
 
     @Override
     public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-
     }
 
     @Override

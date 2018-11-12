@@ -3,4 +3,5 @@
     <color name="colorPrimary">#ff5959</color>
     <color name="colorPrimaryDark">#ff5959</color>
     <color name="colorAccent">#4f9da6</color>
+    <color name="camera_black_with_opacity_background_color">#72000000</color>
 </resources>

@@ -17,6 +17,7 @@ import butterknife.ButterKnife;
 public class HomeActivity extends BaseActivity implements HomeViewInteractor
         , CameraFragment.OnFragmentInteractionListener {
 
+    public static final String TAG = HomeActivity.class.getSimpleName();
     private HomePresenter<HomeViewInteractor> presenter;
     private Fragment mFragment;
 

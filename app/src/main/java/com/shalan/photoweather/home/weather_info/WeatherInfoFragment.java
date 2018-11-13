@@ -177,7 +177,7 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
                 if (location != null) {
                     WeatherInfoFragment.this.userLat = location.getLatitude();
                     WeatherInfoFragment.this.userLng = location.getLongitude();
-                    Log.i(TAG, "onSuccess: " + userLat + "\t" + userLng);
+
                 } else {
                     Log.i(TAG, "onSuccess: location is null");
                 }

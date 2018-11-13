@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -57,7 +58,9 @@ public class HomeActivity extends BaseActivity implements HomeViewInteractor
     @Override
     public void onBackPressed() {
         if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
-            finish();
+            finishAndRemoveTask();
+        }else {
+            getSupportFragmentManager().popBackStack();
         }
     }
 
@@ -75,7 +78,7 @@ public class HomeActivity extends BaseActivity implements HomeViewInteractor
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        switch (requestCode){
+        switch (requestCode) {
             case GOOGLE_PLAY_SERVICE_REQUEST_CODE:
                 if (resultCode != RESULT_OK)
                     finish();
@@ -86,9 +89,12 @@ public class HomeActivity extends BaseActivity implements HomeViewInteractor
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         CameraFragment mCameraFragment = null;
+        WeatherInfoFragment mWeatherInfoFragment = null;
         Fragment mCurrentFragment = getSupportFragmentManager().findFragmentById(R.id.container);
         if (mCurrentFragment instanceof CameraFragment)
             mCameraFragment = (CameraFragment) mCurrentFragment;
+        else if (mCurrentFragment instanceof WeatherInfoFragment)
+            mWeatherInfoFragment = (WeatherInfoFragment) mCurrentFragment;
         switch (requestCode) {
             case AskForPermission.CAMERA_PERMISSION_REQUEST_CODE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -110,25 +116,32 @@ public class HomeActivity extends BaseActivity implements HomeViewInteractor
                 break;
             case AskForPermission.ALL_PERMISSIONS_REQUEST_CODE:
                 if (grantResults.length > 0) {
-                    for (int result : grantResults) {
-                        for (int i = 0; i < grantResults.length; i++) {
-                            if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                                if (mCameraFragment != null) {
-                                    if (permissions[i].equals(AskForPermission.CAMERA_MANIFEST_PERMISSION))
-                                        mCameraFragment.onPermissionGranted(AskForPermission.CAMERA_PERMISSION);
-                                    else
-                                        mCameraFragment.onPermissionGranted(AskForPermission.EXTERNAL_STORAGE_PERMISSION);
-                                }
-                            } else {
-                                if (mCameraFragment != null) {
-                                    if (permissions[i].equals(AskForPermission.CAMERA_MANIFEST_PERMISSION))
-                                        mCameraFragment.onPermissionDenied(AskForPermission.CAMERA_PERMISSION);
-                                    else
-                                        mCameraFragment.onPermissionDenied(AskForPermission.EXTERNAL_STORAGE_PERMISSION);
-                                }
+                    for (int i = 0; i < grantResults.length; i++) {
+                        if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                            if (mCameraFragment != null) {
+                                if (permissions[i].equals(AskForPermission.CAMERA_MANIFEST_PERMISSION))
+                                    mCameraFragment.onPermissionGranted(AskForPermission.CAMERA_PERMISSION);
+                                else
+                                    mCameraFragment.onPermissionGranted(AskForPermission.EXTERNAL_STORAGE_PERMISSION);
+                            }
+                        } else {
+                            if (mCameraFragment != null) {
+                                if (permissions[i].equals(AskForPermission.CAMERA_MANIFEST_PERMISSION))
+                                    mCameraFragment.onPermissionDenied(AskForPermission.CAMERA_PERMISSION);
+                                else
+                                    mCameraFragment.onPermissionDenied(AskForPermission.EXTERNAL_STORAGE_PERMISSION);
                             }
                         }
                     }
+                }
+                break;
+            case AskForPermission.COARSE_LOCATION_PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (mWeatherInfoFragment != null)
+                        mWeatherInfoFragment.onPermissionGranted(AskForPermission.COARSE_LOCATION_PERMISSION);
+                } else {
+                    if (mWeatherInfoFragment != null)
+                        mWeatherInfoFragment.onPermissionDenied(AskForPermission.COARSE_LOCATION_PERMISSION);
                 }
                 break;
         }

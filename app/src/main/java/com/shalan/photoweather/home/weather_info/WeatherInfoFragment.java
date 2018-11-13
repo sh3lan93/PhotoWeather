@@ -10,11 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.shalan.photoweather.PhotoWeatherApp;
 import com.shalan.photoweather.R;
 import com.shalan.photoweather.base.BaseFragment;
 import com.shalan.photoweather.data.AppDataManager;
+import com.shalan.photoweather.utils.AppDialogs;
+import com.shalan.photoweather.utils.AskForPermission;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -24,7 +27,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class WeatherInfoFragment extends BaseFragment implements WeatherInfoViewInteractor, Callback {
+public class WeatherInfoFragment extends BaseFragment implements WeatherInfoViewInteractor, Callback
+        , AppDialogs.PermissionExplanationDialogListener, AskForPermission.PermissionResultListener {
 
     public static final String TAG = WeatherInfoFragment.class.getSimpleName();
 
@@ -35,6 +39,8 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
 
     @BindView(R.id.capturedImage)
     ImageView capturedImage;
+    @BindView(R.id.cautionMessage)
+    TextView cautionMessage;
 
     public WeatherInfoFragment() {
         // Required empty public constructor
@@ -66,8 +72,18 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         initPresenter();
         Picasso.get().load(new File(this.capturedImagePath)).into(this.capturedImage, this);
+    }
+
+    private void showCautionMessage(){
+        cautionMessage.setText(R.string.location_permission_caution_message);
+        cautionMessage.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -95,13 +111,48 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
 
     @Override
     public void onSuccess() {
-
+        presenter.askForLocationPermission();
     }
 
     @Override
     public void onError(Exception e) {
         e.printStackTrace();
         Log.i(TAG, "onError: " + e.getLocalizedMessage());
+    }
+
+    @Override
+    public void requestLocationPermission() {
+        AskForPermission.getInstance(getActivity(), this, this)
+                .requestPermission(AskForPermission.COARSE_LOCATION_PERMISSION);
+    }
+
+    @Override
+    public void requestPermission(int permissionID) {
+        AskForPermission.getInstance(getActivity(), this, this)
+                .forceRequestPermission(permissionID);
+    }
+
+    @Override
+    public void onGrantClicked(int permissionID) {
+        presenter.forceRequestPermission(permissionID);
+    }
+
+    @Override
+    public void onDeniedClicked(int permissionID) {
+        showCautionMessage();
+    }
+
+    @Override
+    public void onPermissionGranted(int permissionID) {
+        //this is the entry point for getting user location
+        //TODO: Getting user last known location == current location
+        //TODO: Show waiting dialog and call weather data api
+
+    }
+
+    @Override
+    public void onPermissionDenied(int permissionID) {
+        showCautionMessage();
     }
 
     public interface OnFragmentInteractionListener {

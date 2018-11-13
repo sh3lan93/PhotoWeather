@@ -8,4 +8,14 @@ public class WeatherInfoPresenter<V extends WeatherInfoViewInteractor> extends B
     public WeatherInfoPresenter(AppDataManager dataManager, V baseViewInteractor) {
         super(dataManager, baseViewInteractor);
     }
+
+    @Override
+    public void askForLocationPermission() {
+        getBaseViewInteractor().requestLocationPermission();
+    }
+
+    @Override
+    public void forceRequestPermission(int permissionID) {
+        getBaseViewInteractor().requestPermission(permissionID);
+    }
 }

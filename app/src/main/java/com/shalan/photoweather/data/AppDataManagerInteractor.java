@@ -1,4 +1,6 @@
 package com.shalan.photoweather.data;
 
-public interface AppDataManagerInteractor {
+import com.shalan.photoweather.data.api.APIHelperInteractor;
+
+public interface AppDataManagerInteractor extends APIHelperInteractor {
 }

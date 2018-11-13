@@ -1,5 +1,6 @@
 package com.shalan.photoweather.network;
 
+
 import com.shalan.photoweather.BuildConfig;
 import com.shalan.photoweather.data.models.WeatherDataBaseModel;
 import com.shalan.photoweather.network.network_listeners.BaseResponseListener;
@@ -10,6 +11,7 @@ public class NetworkService {
     private static NetworkService INSTANCE;
     private RestClientConfig restClient;
     private static final String CLIENT_ID = BuildConfig.CLIENT_ID;
+
     private NetworkService(){
         restClient = RestClientConfig.getInstance();
     }

@@ -5,4 +5,5 @@ import com.shalan.photoweather.base.BaseViewInteractor;
 public interface WeatherInfoViewInteractor extends BaseViewInteractor {
     void requestLocationPermission();
     void requestPermission(int permissionID);
+    void publishErrorMessage(String message);
 }

@@ -23,6 +23,7 @@ import com.shalan.photoweather.base.BaseFragment;
 import com.shalan.photoweather.data.AppDataManager;
 import com.shalan.photoweather.utils.AppDialogs;
 import com.shalan.photoweather.utils.AskForPermission;
+import com.shalan.photoweather.utils.Utils;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -92,8 +93,13 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
         Picasso.get().load(new File(this.capturedImagePath)).into(this.capturedImage, this);
     }
 
-    private void showCautionMessage() {
-        cautionMessage.setText(R.string.location_permission_caution_message);
+    private void showCautionMessage(int message) {
+        cautionMessage.setText(message);
+        cautionMessage.setVisibility(View.VISIBLE);
+    }
+
+    private void showCautionMessage(String message) {
+        cautionMessage.setText(message);
         cautionMessage.setVisibility(View.VISIBLE);
     }
 
@@ -154,13 +160,19 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
     }
 
     @Override
+    public void publishErrorMessage(String message) {
+        showProgress(HIDE);
+        showCautionMessage(message);
+    }
+
+    @Override
     public void onGrantClicked(int permissionID) {
         presenter.forceRequestPermission(permissionID);
     }
 
     @Override
     public void onDeniedClicked(int permissionID) {
-        showCautionMessage();
+        showCautionMessage(R.string.location_permission_caution_message);
     }
 
     @SuppressLint("MissingPermission")
@@ -177,7 +189,12 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
                 if (location != null) {
                     WeatherInfoFragment.this.userLat = location.getLatitude();
                     WeatherInfoFragment.this.userLng = location.getLongitude();
-
+                    if (Utils.checkConnectivity(getContext())){
+                        presenter.requestWeatherData(userLat, userLng);
+                    }else {
+                        showProgress(HIDE);
+                        showCautionMessage(R.string.no_internet_connection_available_message);
+                    }
                 } else {
                     Log.i(TAG, "onSuccess: location is null");
                 }
@@ -187,7 +204,7 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
 
     @Override
     public void onPermissionDenied(int permissionID) {
-        showCautionMessage();
+        showCautionMessage(R.string.location_permission_caution_message);
     }
 
     public interface OnFragmentInteractionListener {

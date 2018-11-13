@@ -12,12 +12,12 @@ android {
     }
     buildTypes {
         debug {
-            buildConfigField "String", "BASE_URL", "api.openweathermap.org/"
-            buildConfigField "String", "CLIENT_ID", "f90dea9cd4186bec206bd4ac81cc6582"
+            buildConfigField "String", "BASE_URL", '"http://api.openweathermap.org/"'
+            buildConfigField "String", "CLIENT_ID", '"f90dea9cd4186bec206bd4ac81cc6582"'
         }
         release {
-            buildConfigField "String", "BASE_URL", "api.openweathermap.org/"
-            buildConfigField "String", "CLIENT_ID", "f90dea9cd4186bec206bd4ac81cc6582"
+            buildConfigField "String", "BASE_URL", '"http://api.openweathermap.org/"'
+            buildConfigField "String", "CLIENT_ID", '"f90dea9cd4186bec206bd4ac81cc6582"'
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

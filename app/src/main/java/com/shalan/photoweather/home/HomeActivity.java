@@ -1,5 +1,6 @@
 package com.shalan.photoweather.home;
 
+import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -75,6 +76,29 @@ public class HomeActivity extends BaseActivity implements HomeViewInteractor
                 } else {
                     if (mCameraFragment != null)
                         mCameraFragment.onPermissionDenied(AskForPermission.EXTERNAL_STORAGE_PERMISSION);
+                }
+                break;
+            case AskForPermission.ALL_PERMISSIONS_REQUEST_CODE:
+                if (grantResults.length > 0){
+                    for (int result : grantResults){
+                        for (int i = 0; i < grantResults.length; i++){
+                            if (grantResults[i] == PackageManager.PERMISSION_GRANTED){
+                                if (mCameraFragment != null){
+                                    if (permissions[i].equals(AskForPermission.CAMERA_MANIFEST_PERMISSION))
+                                        mCameraFragment.onPermissionGranted(AskForPermission.CAMERA_PERMISSION);
+                                    else
+                                        mCameraFragment.onPermissionGranted(AskForPermission.EXTERNAL_STORAGE_PERMISSION);
+                                }
+                            }else {
+                                if (mCameraFragment != null){
+                                    if (permissions[i].equals(AskForPermission.CAMERA_MANIFEST_PERMISSION))
+                                        mCameraFragment.onPermissionDenied(AskForPermission.CAMERA_PERMISSION);
+                                    else
+                                        mCameraFragment.onPermissionDenied(AskForPermission.EXTERNAL_STORAGE_PERMISSION);
+                                }
+                            }
+                        }
+                    }
                 }
                 break;
         }

@@ -21,5 +21,6 @@ public interface CameraPresenterInteractor<V extends CameraViewInteractor> exten
     FileOutputStream getOutputPhoto(File imageFile);
     void lockCaptureSession();
     void unlockCaptureSession();
+    void checkPermissions();
 
 }

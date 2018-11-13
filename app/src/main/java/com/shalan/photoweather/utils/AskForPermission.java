@@ -16,8 +16,9 @@ public class AskForPermission {
     public static final int CAMERA_PERMISSION_REQUEST_CODE = 1000;
     public static final int EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE = 2000;
 
-    private static final String CAMERA_MANIFEST_PERMISSION = Manifest.permission.CAMERA;
-    private static final String EXTERNAL_STORAGE_MANIFEST_PERMISSION = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+    public static final String CAMERA_MANIFEST_PERMISSION = Manifest.permission.CAMERA;
+    public static final String EXTERNAL_STORAGE_MANIFEST_PERMISSION = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+    public static final int ALL_PERMISSIONS_REQUEST_CODE = 3000;
 
     private static AskForPermission INSTANCE;
     private static PermissionResultListener permissionListener;
@@ -46,6 +47,17 @@ public class AskForPermission {
             case EXTERNAL_STORAGE_PERMISSION:
                 checkPermission(EXTERNAL_STORAGE_MANIFEST_PERMISSION, permissionID);
                 break;
+        }
+    }
+
+    public void requestPermission(int [] permissionsID){
+        if (ContextCompat.checkSelfPermission(activity, CAMERA_MANIFEST_PERMISSION) != PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(activity, EXTERNAL_STORAGE_MANIFEST_PERMISSION) != PackageManager.PERMISSION_GRANTED){
+            forceRequestPermission(new String[]{CAMERA_MANIFEST_PERMISSION, EXTERNAL_STORAGE_MANIFEST_PERMISSION});
+        }else {
+            for (int permissionID : permissionsID){
+                permissionListener.onPermissionGranted(permissionID);
+            }
         }
     }
 
@@ -95,9 +107,12 @@ public class AskForPermission {
         }
     }
 
+    public void forceRequestPermission(String [] permissions){
+        ActivityCompat.requestPermissions(activity, permissions, ALL_PERMISSIONS_REQUEST_CODE);
+    }
+
     public interface PermissionResultListener {
         void onPermissionGranted(int permissionID);
-
         void onPermissionDenied(int permissionID);
     }
 }

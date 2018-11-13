@@ -156,6 +156,11 @@ public class CameraPresenter<V extends CameraViewInteractor> extends BasePresent
         }
     }
 
+    @Override
+    public void checkPermissions() {
+        getBaseViewInteractor().askForPermissions();
+    }
+
     private void defineCameraBackgroundThreading() {
         this.cameraBackgroundThread = new HandlerThread(TAG);
         this.cameraBackgroundThread.start();

@@ -79,8 +79,7 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
         initPresenter();
-        presenter.checkCameraPermission();
-        presenter.checkStoragePermission();
+        presenter.checkPermissions();
     }
 
     private void showCautionMessage(int permissionID) {
@@ -217,6 +216,12 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
     public void askForStoragePermission() {
         AskForPermission.getInstance(getActivity(), this, this)
                 .requestPermission(AskForPermission.EXTERNAL_STORAGE_PERMISSION);
+    }
+
+    @Override
+    public void askForPermissions() {
+        AskForPermission.getInstance(getActivity(), this, this)
+                .requestPermission(new int[]{AskForPermission.CAMERA_PERMISSION, AskForPermission.EXTERNAL_STORAGE_PERMISSION});
     }
 
     @Override

@@ -1,7 +1,8 @@
 package com.shalan.photoweather.home.weather_info;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.net.Uri;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,8 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.shalan.photoweather.PhotoWeatherApp;
 import com.shalan.photoweather.R;
 import com.shalan.photoweather.base.BaseFragment;
@@ -33,14 +38,20 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
     public static final String TAG = WeatherInfoFragment.class.getSimpleName();
 
     private static final String IMAGE_FILE_PATH = "capturedImagePath";
-    private OnFragmentInteractionListener mListener;
-    private String capturedImagePath;
-    private WeatherInfoPresenter<WeatherInfoViewInteractor> presenter;
-
+    private static final int SHOW = 1;
+    private static final int HIDE = 2;
     @BindView(R.id.capturedImage)
     ImageView capturedImage;
     @BindView(R.id.cautionMessage)
     TextView cautionMessage;
+    @BindView(R.id.loadingProgressBar)
+    ProgressBar loadingProgressBar;
+    private OnFragmentInteractionListener mListener;
+    private String capturedImagePath;
+    private WeatherInfoPresenter<WeatherInfoViewInteractor> presenter;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private double userLat;
+    private double userLng;
 
     public WeatherInfoFragment() {
         // Required empty public constructor
@@ -81,9 +92,19 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
         Picasso.get().load(new File(this.capturedImagePath)).into(this.capturedImage, this);
     }
 
-    private void showCautionMessage(){
+    private void showCautionMessage() {
         cautionMessage.setText(R.string.location_permission_caution_message);
         cautionMessage.setVisibility(View.VISIBLE);
+    }
+
+    private void showProgress(int state) {
+        if (state == SHOW)
+            if (loadingProgressBar.getVisibility() != View.VISIBLE)
+                loadingProgressBar.setVisibility(View.VISIBLE);
+        else if (state == HIDE)
+            if (loadingProgressBar.getVisibility() == View.VISIBLE)
+                loadingProgressBar.setVisibility(View.GONE);
+
     }
 
     @Override
@@ -142,12 +163,26 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
         showCautionMessage();
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onPermissionGranted(int permissionID) {
         //this is the entry point for getting user location
         //TODO: Getting user last known location == current location
         //TODO: Show waiting dialog and call weather data api
-
+        showProgress(SHOW);
+        this.mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
+        this.mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if (location != null) {
+                    WeatherInfoFragment.this.userLat = location.getLatitude();
+                    WeatherInfoFragment.this.userLng = location.getLongitude();
+                    Log.i(TAG, "onSuccess: " + userLat + "\t" + userLng);
+                } else {
+                    Log.i(TAG, "onSuccess: location is null");
+                }
+            }
+        });
     }
 
     @Override

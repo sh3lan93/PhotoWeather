@@ -141,7 +141,7 @@ public class CameraPresenter<V extends CameraViewInteractor> extends BasePresent
     @Override
     public void lockCaptureSession() {
         try {
-            cameraCaptureSession.capture(captureRequestBuilder.build(), new CaptureCallbacks(), cameraBackgroundHandler);
+            cameraCaptureSession.capture(captureRequestBuilder.build(), null, cameraBackgroundHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -150,7 +150,7 @@ public class CameraPresenter<V extends CameraViewInteractor> extends BasePresent
     @Override
     public void unlockCaptureSession() {
         try {
-            cameraCaptureSession.setRepeatingRequest(captureRequestBuilder.build(), new CaptureCallbacks(), cameraBackgroundHandler);
+            cameraCaptureSession.setRepeatingRequest(captureRequestBuilder.build(), null, cameraBackgroundHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -204,7 +204,7 @@ public class CameraPresenter<V extends CameraViewInteractor> extends BasePresent
                                 captureRequest = captureRequestBuilder.build();
                                 CameraPresenter.this.cameraCaptureSession = cameraCaptureSession;
                                 CameraPresenter.this.cameraCaptureSession.setRepeatingRequest(captureRequest,
-                                        new CaptureCallbacks(), cameraBackgroundHandler);
+                                        null, cameraBackgroundHandler);
                             } catch (CameraAccessException e) {
                                 e.printStackTrace();
                             }

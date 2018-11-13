@@ -11,12 +11,15 @@ import com.shalan.photoweather.R;
 import com.shalan.photoweather.base.BaseActivity;
 import com.shalan.photoweather.data.AppDataManager;
 import com.shalan.photoweather.home.camera.CameraFragment;
+import com.shalan.photoweather.home.weather_info.WeatherInfoFragment;
 import com.shalan.photoweather.utils.AskForPermission;
+
+import java.io.File;
 
 import butterknife.ButterKnife;
 
 public class HomeActivity extends BaseActivity implements HomeViewInteractor
-        , CameraFragment.OnFragmentInteractionListener {
+        , CameraFragment.OnFragmentInteractionListener, WeatherInfoFragment.OnFragmentInteractionListener {
 
     public static final String TAG = HomeActivity.class.getSimpleName();
     private HomePresenter<HomeViewInteractor> presenter;
@@ -42,7 +45,7 @@ public class HomeActivity extends BaseActivity implements HomeViewInteractor
     @Override
     public void openCameraFragment() {
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.container, new CameraFragment(), CameraFragment.TAG)
+                .add(R.id.container, CameraFragment.newInstance(), CameraFragment.TAG)
                 .addToBackStack(HomeActivity.class.getSimpleName()).commit();
     }
 
@@ -102,5 +105,14 @@ public class HomeActivity extends BaseActivity implements HomeViewInteractor
                 }
                 break;
         }
+    }
+
+    @Override
+    public void onFinishCapturingImage(File capturedImageFile) {
+        //TODO: implement open edit fragment here
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, WeatherInfoFragment.newInstance(capturedImageFile.getPath())
+                        , WeatherInfoFragment.TAG)
+                .addToBackStack(HomeActivity.class.getSimpleName()).commit();
     }
 }

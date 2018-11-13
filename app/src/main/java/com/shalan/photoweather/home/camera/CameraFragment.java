@@ -115,6 +115,8 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
                 ex.printStackTrace();
                 Log.i(TAG, "onCapturePhotoClicked: " + ex.getLocalizedMessage());
             }
+            if (mListener != null)
+                mListener.onFinishCapturingImage(this.imageFile);
         }
     }
 
@@ -260,6 +262,6 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
     }
 
     public interface OnFragmentInteractionListener {
-
+        void onFinishCapturingImage(File capturedImageFile);
     }
 }

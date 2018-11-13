@@ -153,6 +153,9 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
                 mCameraManager = getContext() != null
                         ? (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE) : null;
                 break;
+            case AskForPermission.EXTERNAL_STORAGE_PERMISSION:
+                presenter.createTempImageFile(presenter.createAppImagesPublicDirectory(getString(R.string.app_name)));
+                break;
         }
     }
 

@@ -9,6 +9,7 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
@@ -19,11 +20,17 @@ import android.view.Surface;
 import com.shalan.photoweather.base.BasePresenter;
 import com.shalan.photoweather.data.AppDataManager;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
+import java.util.Locale;
 
 public class CameraPresenter<V extends CameraViewInteractor> extends BasePresenter<V> implements CameraPresenterInteractor<V> {
 
     public static final String TAG = CameraPresenter.class.getSimpleName();
+    private static final String IMAGE_FORMAT = ".jpg";
     private Size cameraPreviewSize;
     private String mCameraID;
     private CameraDevice.StateCallback mCameraPreviewStateCallback;
@@ -33,6 +40,8 @@ public class CameraPresenter<V extends CameraViewInteractor> extends BasePresent
     private CameraCaptureSession cameraCaptureSession;
     private HandlerThread cameraBackgroundThread;
     private Handler cameraBackgroundHandler;
+    private File storageDirectory;
+    private File appGalleryFolder = null;
 
     public CameraPresenter(AppDataManager dataManager, V baseViewInteractor) {
         super(dataManager, baseViewInteractor);
@@ -91,6 +100,29 @@ public class CameraPresenter<V extends CameraViewInteractor> extends BasePresent
             cameraBackgroundThread = null;
             cameraBackgroundHandler = null;
         }
+    }
+
+    @Override
+    public File createAppImagesPublicDirectory(String directoryName) {
+        this.storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        this.appGalleryFolder = new File(this.storageDirectory, directoryName);
+        if (!this.appGalleryFolder.exists()){
+            this.appGalleryFolder.mkdirs();
+        }
+        return this.appGalleryFolder;
+    }
+
+    @Override
+    public File createTempImageFile(File appDirectory) {
+        String timeStamp = new SimpleDateFormat("yyyyddMM_HHmmss", Locale.getDefault()).format(new Date());
+        String imageFileName = appDirectory.getName().concat("_").concat(timeStamp);
+        File imageFile = null;
+        try {
+            imageFile = File.createTempFile(imageFileName, IMAGE_FORMAT, appDirectory);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return imageFile;
     }
 
     private void defineCameraBackgroundThreading() {

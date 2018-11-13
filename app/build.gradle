@@ -13,9 +13,11 @@ android {
     buildTypes {
         debug {
             buildConfigField "String", "BASE_URL", "api.openweathermap.org/"
+            buildConfigField "String", "CLIENT_ID", "f90dea9cd4186bec206bd4ac81cc6582"
         }
         release {
             buildConfigField "String", "BASE_URL", "api.openweathermap.org/"
+            buildConfigField "String", "CLIENT_ID", "f90dea9cd4186bec206bd4ac81cc6582"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -34,4 +36,8 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.google.android.gms:play-services-location:16.0.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
 }

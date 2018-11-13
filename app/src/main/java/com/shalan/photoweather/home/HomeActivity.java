@@ -1,11 +1,14 @@
 package com.shalan.photoweather.home;
 
-import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.shalan.photoweather.PhotoWeatherApp;
 import com.shalan.photoweather.R;
 import com.shalan.photoweather.base.BaseActivity;
@@ -22,6 +25,8 @@ public class HomeActivity extends BaseActivity implements HomeViewInteractor
         , CameraFragment.OnFragmentInteractionListener, WeatherInfoFragment.OnFragmentInteractionListener {
 
     public static final String TAG = HomeActivity.class.getSimpleName();
+    private static final int GOOGLE_PLAY_SERVICE_REQUEST_CODE = 4000;
+
     private HomePresenter<HomeViewInteractor> presenter;
     private Fragment mFragment;
 
@@ -57,6 +62,28 @@ public class HomeActivity extends BaseActivity implements HomeViewInteractor
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        int googleApiAvailability = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+        if (googleApiAvailability != ConnectionResult.SUCCESS
+                && GoogleApiAvailability.getInstance().isUserResolvableError(googleApiAvailability)) {
+            GoogleApiAvailability.getInstance()
+                    .getErrorDialog(this, googleApiAvailability, GOOGLE_PLAY_SERVICE_REQUEST_CODE)
+                    .show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        switch (requestCode){
+            case GOOGLE_PLAY_SERVICE_REQUEST_CODE:
+                if (resultCode != RESULT_OK)
+                    finish();
+                break;
+        }
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         CameraFragment mCameraFragment = null;
         Fragment mCurrentFragment = getSupportFragmentManager().findFragmentById(R.id.container);
@@ -82,18 +109,18 @@ public class HomeActivity extends BaseActivity implements HomeViewInteractor
                 }
                 break;
             case AskForPermission.ALL_PERMISSIONS_REQUEST_CODE:
-                if (grantResults.length > 0){
-                    for (int result : grantResults){
-                        for (int i = 0; i < grantResults.length; i++){
-                            if (grantResults[i] == PackageManager.PERMISSION_GRANTED){
-                                if (mCameraFragment != null){
+                if (grantResults.length > 0) {
+                    for (int result : grantResults) {
+                        for (int i = 0; i < grantResults.length; i++) {
+                            if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                                if (mCameraFragment != null) {
                                     if (permissions[i].equals(AskForPermission.CAMERA_MANIFEST_PERMISSION))
                                         mCameraFragment.onPermissionGranted(AskForPermission.CAMERA_PERMISSION);
                                     else
                                         mCameraFragment.onPermissionGranted(AskForPermission.EXTERNAL_STORAGE_PERMISSION);
                                 }
-                            }else {
-                                if (mCameraFragment != null){
+                            } else {
+                                if (mCameraFragment != null) {
                                     if (permissions[i].equals(AskForPermission.CAMERA_MANIFEST_PERMISSION))
                                         mCameraFragment.onPermissionDenied(AskForPermission.CAMERA_PERMISSION);
                                     else

@@ -106,7 +106,7 @@ public class CameraPresenter<V extends CameraViewInteractor> extends BasePresent
 
     @Override
     public File createAppImagesPublicDirectory(String directoryName) {
-        this.storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        this.storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
         this.appGalleryFolder = new File(this.storageDirectory, directoryName);
         if (!this.appGalleryFolder.exists()){
             this.appGalleryFolder.mkdirs();

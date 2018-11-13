@@ -1,6 +1,7 @@
 package com.shalan.photoweather.home.weather_info;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,12 +15,16 @@ import com.shalan.photoweather.PhotoWeatherApp;
 import com.shalan.photoweather.R;
 import com.shalan.photoweather.base.BaseFragment;
 import com.shalan.photoweather.data.AppDataManager;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class WeatherInfoFragment extends BaseFragment implements WeatherInfoViewInteractor {
+public class WeatherInfoFragment extends BaseFragment implements WeatherInfoViewInteractor, Callback {
 
     public static final String TAG = WeatherInfoFragment.class.getSimpleName();
 
@@ -62,6 +67,7 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
         initPresenter();
+        Picasso.get().load(new File(this.capturedImagePath)).into(this.capturedImage, this);
     }
 
     @Override
@@ -85,6 +91,17 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
     protected void initPresenter() {
         AppDataManager dataManager = ((PhotoWeatherApp) (getContext().getApplicationContext())).getDataManager();
         presenter = new WeatherInfoPresenter<WeatherInfoViewInteractor>(dataManager, this);
+    }
+
+    @Override
+    public void onSuccess() {
+
+    }
+
+    @Override
+    public void onError(Exception e) {
+        e.printStackTrace();
+        Log.i(TAG, "onError: " + e.getLocalizedMessage());
     }
 
     public interface OnFragmentInteractionListener {

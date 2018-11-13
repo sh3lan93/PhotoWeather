@@ -96,9 +96,9 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
     public void onCapturePhotoClicked() {
         presenter.lockCaptureSession();
         this.imageFile = presenter.createTempImageFile(presenter.createAppImagesPublicDirectory(getString(R.string.app_name)));
+        Log.i(TAG, "onCapturePhotoClicked: " + this.imageFile);
         try {
-            this.imageOutputStream = presenter.getOutputPhoto(presenter
-                    .createTempImageFile(presenter.createAppImagesPublicDirectory(getString(R.string.app_name))));
+            this.imageOutputStream = presenter.getOutputPhoto(this.imageFile);
             if (this.imageOutputStream != null)
                 cameraPreview.getBitmap().compress(Bitmap.CompressFormat.PNG, 100, this.imageOutputStream);
             else

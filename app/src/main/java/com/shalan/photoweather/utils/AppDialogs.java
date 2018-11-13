@@ -32,6 +32,19 @@ public class AppDialogs {
         alertDialog.show();
     }
 
+    public static void showErrorDialog(Context context, String message){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(context.getString(R.string.error_happened_title));
+        builder.setMessage(message);
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
+    }
+
     public interface PermissionExplanationDialogListener{
         void onGrantClicked(int permissionID);
         void onDeniedClicked(int permissionID);

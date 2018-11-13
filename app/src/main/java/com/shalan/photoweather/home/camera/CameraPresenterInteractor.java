@@ -6,6 +6,7 @@ import android.hardware.camera2.CameraManager;
 import com.shalan.photoweather.base.BasePresenterInteractor;
 
 import java.io.File;
+import java.io.FileOutputStream;
 
 public interface CameraPresenterInteractor<V extends CameraViewInteractor> extends BasePresenterInteractor<V> {
     void checkCameraPermission();
@@ -17,5 +18,8 @@ public interface CameraPresenterInteractor<V extends CameraViewInteractor> exten
     void quiteCameraHandler();
     File createAppImagesPublicDirectory(String directoryName);
     File createTempImageFile(File appDirectory);
+    FileOutputStream getOutputPhoto(File imageFile);
+    void lockCaptureSession();
+    void unlockCaptureSession();
 
 }

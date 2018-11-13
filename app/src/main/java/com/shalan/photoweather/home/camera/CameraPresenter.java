@@ -21,6 +21,8 @@ import com.shalan.photoweather.base.BasePresenter;
 import com.shalan.photoweather.data.AppDataManager;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -125,6 +127,35 @@ public class CameraPresenter<V extends CameraViewInteractor> extends BasePresent
         return imageFile;
     }
 
+    @Override
+    public FileOutputStream getOutputPhoto(File imageFile) {
+        FileOutputStream imageOutputStream = null;
+        try {
+            imageOutputStream = new FileOutputStream(imageFile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return imageOutputStream;
+    }
+
+    @Override
+    public void lockCaptureSession() {
+        try {
+            cameraCaptureSession.capture(captureRequestBuilder.build(), new CaptureCallbacks(), cameraBackgroundHandler);
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void unlockCaptureSession() {
+        try {
+            cameraCaptureSession.setRepeatingRequest(captureRequestBuilder.build(), new CaptureCallbacks(), cameraBackgroundHandler);
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void defineCameraBackgroundThreading() {
         this.cameraBackgroundThread = new HandlerThread(TAG);
         this.cameraBackgroundThread.start();
@@ -173,7 +204,7 @@ public class CameraPresenter<V extends CameraViewInteractor> extends BasePresent
                                 captureRequest = captureRequestBuilder.build();
                                 CameraPresenter.this.cameraCaptureSession = cameraCaptureSession;
                                 CameraPresenter.this.cameraCaptureSession.setRepeatingRequest(captureRequest,
-                                        null, cameraBackgroundHandler);
+                                        new CaptureCallbacks(), cameraBackgroundHandler);
                             } catch (CameraAccessException e) {
                                 e.printStackTrace();
                             }

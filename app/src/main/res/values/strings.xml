@@ -10,4 +10,7 @@
     <string name="external_storage_permission_message">This app operate on writing to your external storage, please give us writing to your external storage</string>
     <string name="camera_permission_caution_message">We can\'t complete our functionality because we don\'t have camera permission</string>
     <string name="external_storage_permission_caution_message">We can\'t complete our functionality because we don\'t have write to external permission</string>
+    <string name="error_happened_title">An error has been occurred</string>
+    <string name="ok">Ok</string>
+    <string name="output_null_error">Image output stream is null</string>
 </resources>

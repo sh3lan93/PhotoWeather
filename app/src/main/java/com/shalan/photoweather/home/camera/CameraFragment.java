@@ -1,12 +1,14 @@
 package com.shalan.photoweather.home.camera;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
@@ -20,6 +22,10 @@ import com.shalan.photoweather.base.BaseFragment;
 import com.shalan.photoweather.data.AppDataManager;
 import com.shalan.photoweather.utils.AppDialogs;
 import com.shalan.photoweather.utils.AskForPermission;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,6 +52,8 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
     private CameraPresenter<CameraViewInteractor> presenter;
     private CameraManager mCameraManager;
     private static final int mBackCamera = 1;
+    private FileOutputStream imageOutputStream;
+    private File imageFile;
 
     public CameraFragment() {
         // Required empty public constructor
@@ -87,7 +95,28 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
 
     @OnClick(R.id.capturePhoto)
     public void onCapturePhotoClicked() {
-
+        presenter.lockCaptureSession();
+        this.imageFile = presenter.createTempImageFile(presenter.createAppImagesPublicDirectory(getString(R.string.app_name)));
+        try {
+            this.imageOutputStream = presenter.getOutputPhoto(presenter
+                    .createTempImageFile(presenter.createAppImagesPublicDirectory(getString(R.string.app_name))));
+            if (this.imageOutputStream != null)
+                cameraPreview.getBitmap().compress(Bitmap.CompressFormat.PNG, 100, this.imageOutputStream);
+            else
+                AppDialogs.showErrorDialog(getContext(), getString(R.string.output_null_error));
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.i(TAG, "onCapturePhotoClicked: " + e.getLocalizedMessage());
+        } finally {
+            presenter.unlockCaptureSession();
+            try{
+                if (this.imageOutputStream != null)
+                    this.imageOutputStream.close();
+            }catch (IOException ex){
+                ex.printStackTrace();
+                Log.i(TAG, "onCapturePhotoClicked: " + ex.getLocalizedMessage());
+            }
+        }
     }
 
     @OnClick(R.id.history)
@@ -154,7 +183,7 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
                         ? (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE) : null;
                 break;
             case AskForPermission.EXTERNAL_STORAGE_PERMISSION:
-                presenter.createTempImageFile(presenter.createAppImagesPublicDirectory(getString(R.string.app_name)));
+                presenter.createAppImagesPublicDirectory(getString(R.string.app_name));
                 break;
         }
     }

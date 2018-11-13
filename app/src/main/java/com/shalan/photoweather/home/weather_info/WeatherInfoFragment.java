@@ -1,25 +1,25 @@
 package com.shalan.photoweather.home.weather_info;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.shalan.photoweather.PhotoWeatherApp;
 import com.shalan.photoweather.R;
 import com.shalan.photoweather.base.BaseFragment;
 import com.shalan.photoweather.data.AppDataManager;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class WeatherInfoFragment extends BaseFragment implements WeatherInfoViewInteractor{
+public class WeatherInfoFragment extends BaseFragment implements WeatherInfoViewInteractor {
 
     public static final String TAG = WeatherInfoFragment.class.getSimpleName();
 
@@ -27,6 +27,9 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
     private OnFragmentInteractionListener mListener;
     private String capturedImagePath;
     private WeatherInfoPresenter<WeatherInfoViewInteractor> presenter;
+
+    @BindView(R.id.capturedImage)
+    ImageView capturedImage;
 
     public WeatherInfoFragment() {
         // Required empty public constructor
@@ -43,7 +46,7 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null){
+        if (getArguments() != null) {
             this.capturedImagePath = getArguments().getString(IMAGE_FILE_PATH);
             Log.i(TAG, "onCreate: " + this.capturedImagePath);
         }
@@ -80,7 +83,7 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
 
     @Override
     protected void initPresenter() {
-        AppDataManager dataManager = ((PhotoWeatherApp)(getContext().getApplicationContext())).getDataManager();
+        AppDataManager dataManager = ((PhotoWeatherApp) (getContext().getApplicationContext())).getDataManager();
         presenter = new WeatherInfoPresenter<WeatherInfoViewInteractor>(dataManager, this);
     }
 

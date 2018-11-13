@@ -70,9 +70,11 @@ public class HomeActivity extends BaseActivity implements HomeViewInteractor
                 break;
             case AskForPermission.EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
+                    if (mCameraFragment != null)
+                        mCameraFragment.onPermissionGranted(AskForPermission.EXTERNAL_STORAGE_PERMISSION);
                 } else {
-
+                    if (mCameraFragment != null)
+                        mCameraFragment.onPermissionDenied(AskForPermission.EXTERNAL_STORAGE_PERMISSION);
                 }
                 break;
         }

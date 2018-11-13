@@ -2,18 +2,12 @@ package com.shalan.photoweather.home.camera;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import android.support.constraint.ConstraintLayout;
 import android.view.LayoutInflater;
-import android.view.OrientationEventListener;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +23,7 @@ import com.shalan.photoweather.utils.AskForPermission;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
 public class CameraFragment extends BaseFragment implements CameraViewInteractor
@@ -41,9 +36,11 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
     @BindView(R.id.cautionMessage)
     TextView cautionMessage;
     @BindView(R.id.capturePhoto)
-    ImageView capturephoto;
+    ImageView capturePhoto;
     @BindView(R.id.history)
     ImageView history;
+    @BindView(R.id.cameraOptionsHolder)
+    ConstraintLayout cameraOptionsHolder;
 
     private OnFragmentInteractionListener mListener;
     private CameraPresenter<CameraViewInteractor> presenter;
@@ -75,10 +72,12 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
         ButterKnife.bind(this, view);
         initPresenter();
         presenter.checkCameraPermission();
+        presenter.checkStoragePermission();
     }
 
     private void showCautionMessage(int permissionID) {
         cameraPreview.setVisibility(View.GONE);
+        cameraOptionsHolder.setVisibility(View.GONE);
         cautionMessage.setVisibility(View.VISIBLE);
         if (permissionID == AskForPermission.CAMERA_PERMISSION)
             cautionMessage.setText(R.string.camera_permission_caution_message);
@@ -86,13 +85,21 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
             cautionMessage.setText(R.string.external_storage_permission_caution_message);
     }
 
+    @OnClick(R.id.capturePhoto)
+    public void onCapturePhotoClicked() {
+
+    }
+
+    @OnClick(R.id.history)
+    public void onHistoryClicked() {
+
+    }
 
     @Override
     public void onStop() {
         super.onStop();
         presenter.closeCameraDevice();
         presenter.quiteCameraHandler();
-
     }
 
     @Override
@@ -104,7 +111,7 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
             if (mCameraManager != null) {
                 presenter.configureCamera(mCameraManager, mBackCamera, cameraPreview.getSurfaceTexture());
                 presenter.startCameraStream(mCameraManager);
-            }else {
+            } else {
                 mCameraManager = (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE);
                 presenter.configureCamera(mCameraManager, mBackCamera, cameraPreview.getSurfaceTexture());
                 presenter.startCameraStream(mCameraManager);
@@ -140,9 +147,13 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
     /*listener fired from permission request*/
     @Override
     public void onPermissionGranted(int permissionID) {
-        /*entry point for camera*/
-        mCameraManager = getContext() != null
-                ? (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE) : null;
+        /*entry point for camera and storage permission*/
+        switch (permissionID) {
+            case AskForPermission.CAMERA_PERMISSION:
+                mCameraManager = getContext() != null
+                        ? (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE) : null;
+                break;
+        }
     }
 
     /*listener fired from permission request*/
@@ -171,6 +182,12 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
     }
 
     @Override
+    public void askForStoragePermission() {
+        AskForPermission.getInstance(getActivity(), this, this)
+                .requestPermission(AskForPermission.EXTERNAL_STORAGE_PERMISSION);
+    }
+
+    @Override
     public void requestPermission(int permission) {
         AskForPermission.getInstance(getActivity(), this, this)
                 .forceRequestPermission(permission);
@@ -183,7 +200,7 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
             if (mCameraManager != null) {
                 presenter.configureCamera(mCameraManager, mBackCamera, cameraPreview.getSurfaceTexture());
                 presenter.startCameraStream(mCameraManager);
-            }else {
+            } else {
                 mCameraManager = (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE);
                 presenter.configureCamera(mCameraManager, mBackCamera, cameraPreview.getSurfaceTexture());
                 presenter.startCameraStream(mCameraManager);

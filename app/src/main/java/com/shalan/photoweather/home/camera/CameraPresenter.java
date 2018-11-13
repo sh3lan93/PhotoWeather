@@ -44,6 +44,11 @@ public class CameraPresenter<V extends CameraViewInteractor> extends BasePresent
     }
 
     @Override
+    public void checkStoragePermission() {
+        getBaseViewInteractor().askForStoragePermission();
+    }
+
+    @Override
     public void forceRequestPermission(int permissionID) {
         getBaseViewInteractor().requestPermission(permissionID);
     }

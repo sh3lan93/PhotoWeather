@@ -15,6 +15,7 @@ public class PhotoWeatherApp extends Application {
     public void onCreate() {
         super.onCreate();
         dataManager = new AppDataManager(this);
+        initConnectivityBroadCast();
     }
 
     public AppDataManager getDataManager() {

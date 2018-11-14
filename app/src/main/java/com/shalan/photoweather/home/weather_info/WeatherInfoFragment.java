@@ -104,12 +104,13 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
     }
 
     private void showProgress(int state) {
-        if (state == SHOW)
+        if (state == SHOW) {
             if (loadingProgressBar.getVisibility() != View.VISIBLE)
                 loadingProgressBar.setVisibility(View.VISIBLE);
-        else if (state == HIDE)
+        } else if (state == HIDE) {
             if (loadingProgressBar.getVisibility() == View.VISIBLE)
                 loadingProgressBar.setVisibility(View.GONE);
+        }
 
     }
 
@@ -134,6 +135,12 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
     protected void initPresenter() {
         AppDataManager dataManager = ((PhotoWeatherApp) (getContext().getApplicationContext())).getDataManager();
         presenter = new WeatherInfoPresenter<WeatherInfoViewInteractor>(dataManager, this);
+    }
+
+    @Override
+    protected void noConnectionAvailable() {
+        showProgress(HIDE);
+        showCautionMessage(R.string.no_internet_connection_available_message);
     }
 
     @Override
@@ -189,9 +196,9 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
                 if (location != null) {
                     WeatherInfoFragment.this.userLat = location.getLatitude();
                     WeatherInfoFragment.this.userLng = location.getLongitude();
-                    if (Utils.checkConnectivity(getContext())){
+                    if (Utils.checkConnectivity(getContext())) {
                         presenter.requestWeatherData(userLat, userLng);
-                    }else {
+                    } else {
                         showProgress(HIDE);
                         showCautionMessage(R.string.no_internet_connection_available_message);
                     }

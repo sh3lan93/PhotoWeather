@@ -174,6 +174,11 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
         presenter = new CameraPresenter<CameraViewInteractor>(dataManager, this);
     }
 
+    @Override
+    protected void noConnectionAvailable() {
+
+    }
+
     /*listener fired from permission request*/
     @Override
     public void onPermissionGranted(int permissionID) {

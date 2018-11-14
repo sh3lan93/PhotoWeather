@@ -21,6 +21,7 @@ import com.shalan.photoweather.PhotoWeatherApp;
 import com.shalan.photoweather.R;
 import com.shalan.photoweather.base.BaseFragment;
 import com.shalan.photoweather.data.AppDataManager;
+import com.shalan.photoweather.data.models.WeatherDataBaseModel;
 import com.shalan.photoweather.utils.AppDialogs;
 import com.shalan.photoweather.utils.AskForPermission;
 import com.shalan.photoweather.utils.Utils;
@@ -53,6 +54,7 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
     private FusedLocationProviderClient mFusedLocationClient;
     private double userLat = -1;
     private double userLng = -1;
+    private WeatherDataBaseModel weatherData;
 
     public WeatherInfoFragment() {
         // Required empty public constructor
@@ -153,10 +155,10 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
                 && this.cautionMessage.getVisibility() == View.VISIBLE
                 && this.cautionMessage.getText().toString()
                 .equals(getString(R.string.no_internet_connection_available_message))
-                && loadingProgressBar.getVisibility() != View.VISIBLE){
+                && loadingProgressBar.getVisibility() != View.VISIBLE && this.weatherData == null){
             hideCautionMessage();
             showProgress(SHOW);
-            //TODO: Check if the weather data object is null if so make recall
+            presenter.requestWeatherData(this.userLat, this.userLng);
         }
     }
 
@@ -187,6 +189,11 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
     public void publishErrorMessage(String message) {
         showProgress(HIDE);
         showCautionMessage(message);
+    }
+
+    @Override
+    public void publishWeatherData(WeatherDataBaseModel baseModel) {
+        this.weatherData = baseModel;
     }
 
     @Override

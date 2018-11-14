@@ -33,7 +33,7 @@ public class WeatherInfoPresenter<V extends WeatherInfoViewInteractor> extends B
 
     @Override
     public void getDataSuccess(WeatherDataBaseModel weatherDataBaseModel) {
-        Log.i(TAG, "getDataSuccess: " + weatherDataBaseModel.getName());
+        getBaseViewInteractor().publishWeatherData(weatherDataBaseModel);
     }
 
     @Override

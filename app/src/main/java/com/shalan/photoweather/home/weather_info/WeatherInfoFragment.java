@@ -6,8 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Bundle;
@@ -40,6 +38,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,7 +53,7 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
     private static final String IMAGE_FILE_PATH = "capturedImagePath";
     private static final int SHOW = 1;
     private static final int HIDE = 2;
-    private static final float DRAWING_TEXT_SIZE = 12f;
+    private static final float DRAWING_TEXT_SIZE = 40;
     @BindView(R.id.capturedImage)
     ImageView capturedImage;
     @BindView(R.id.cautionMessage)
@@ -67,6 +67,7 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
     private double userLat = -1;
     private double userLng = -1;
     private WeatherDataBaseModel weatherData;
+    private int space;
 
     public WeatherInfoFragment() {
         // Required empty public constructor
@@ -137,12 +138,16 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
         FileOutputStream outputStream = null;
         Canvas canvas = new Canvas(newBitmap);
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(Color.WHITE);
+        if (Utils.isMorning())
+            paint.setColor(Color.BLACK);
+        else
+            paint.setColor(Color.WHITE);
         paint.setTextSize(DRAWING_TEXT_SIZE);
-//        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.OVERLAY));
 
-//        canvas.drawBitmap(newBitmap, 0, 0, paint);
-        canvas.drawText(weatherData.getName(), 10, 10, paint);
+        for (String text : getWeatherData())
+            canvas.drawText(text
+                    , (newBitmap.getWidth() / 2) - 100
+                    , (newBitmap.getHeight() / 2) + (space+=50), paint);
 
         File newModifiedCapturedImage = new File(this.capturedImagePath);
         if (!newModifiedCapturedImage.exists()) {
@@ -169,6 +174,15 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
                 loadImageFile();
             }
         }
+    }
+
+    private List<String> getWeatherData() {
+        List<String> list = new ArrayList<>();
+        list.add(getString(R.string.city).concat(weatherData.getName()).concat("-").concat(weatherData.getSys().getCountry()));
+        list.add(getString(R.string.status).concat(weatherData.getWeather().get(0).getMain()));
+        list.add(getString(R.string.temp).concat(String.valueOf(weatherData.getMain().getTemp())));
+        list.add(getString(R.string.humidity).concat(String.valueOf(weatherData.getMain().getHumidity())));
+        return list;
     }
 
     private void loadImageFile() {

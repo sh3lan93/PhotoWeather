@@ -2,6 +2,7 @@ package com.shalan.photoweather.home;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -27,6 +28,7 @@ public class HomeActivity extends BaseActivity implements HomeViewInteractor
 
     public static final String TAG = HomeActivity.class.getSimpleName();
     private static final int GOOGLE_PLAY_SERVICE_REQUEST_CODE = 4000;
+    private static final String IMAGE_TYPE = "image/*";
 
     private HomePresenter<HomeViewInteractor> presenter;
     private Fragment mFragment;
@@ -158,6 +160,10 @@ public class HomeActivity extends BaseActivity implements HomeViewInteractor
 
     @Override
     public void shareImage(String imagePath) {
-
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType(IMAGE_TYPE);
+        Uri imageUri = Uri.fromFile(new File(imagePath));
+        shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+        startActivity(Intent.createChooser(shareIntent, getString(R.string.share_via_title)));
     }
 }

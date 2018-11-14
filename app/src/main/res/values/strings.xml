@@ -21,4 +21,5 @@
     <string name="temp">Temp:</string>
     <string name="humidity">Humidity:</string>
     <string name="share">Share Photo</string>
+    <string name="share_via_title">Select another app to share your captured image</string>
 </resources>

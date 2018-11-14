@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +18,7 @@ import com.shalan.photoweather.R;
 import com.shalan.photoweather.base.BaseFragment;
 import com.shalan.photoweather.data.AppDataManager;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
@@ -26,6 +30,9 @@ public class HistoryListFragment extends BaseFragment implements HistoryListFrag
 
     private HistoryListFragmentPresenter<HistoryListFragmentViewInteractor> presenter;
 
+    @BindView(R.id.historyRecycler)
+    RecyclerView historyRecycler;
+
     public HistoryListFragment() {
         // Required empty public constructor
     }
@@ -33,7 +40,6 @@ public class HistoryListFragment extends BaseFragment implements HistoryListFrag
 
     public static HistoryListFragment newInstance() {
         HistoryListFragment fragment = new HistoryListFragment();
-        Bundle args = new Bundle();
         return fragment;
     }
 
@@ -51,6 +57,9 @@ public class HistoryListFragment extends BaseFragment implements HistoryListFrag
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
+        historyRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        historyRecycler.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+
     }
 
     @Override

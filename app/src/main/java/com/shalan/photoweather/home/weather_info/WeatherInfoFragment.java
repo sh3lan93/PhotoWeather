@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -43,6 +44,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
 public class WeatherInfoFragment extends BaseFragment implements WeatherInfoViewInteractor, Callback
@@ -60,6 +62,9 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
     TextView cautionMessage;
     @BindView(R.id.loadingProgressBar)
     ProgressBar loadingProgressBar;
+    @BindView(R.id.shareBtn)
+    Button shareBtn;
+
     private OnFragmentInteractionListener mListener;
     private String capturedImagePath;
     private WeatherInfoPresenter<WeatherInfoViewInteractor> presenter;
@@ -189,14 +194,28 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
         Picasso.get().load(new File(this.capturedImagePath)).memoryPolicy(MemoryPolicy.NO_CACHE).into(this.capturedImage, new Callback() {
             @Override
             public void onSuccess() {
-                Log.i(TAG, "onSuccess: ");
+                showProgress(HIDE);
+                showShareBtn();
+                presenter.saveImageToHistory(capturedImagePath);
             }
 
             @Override
             public void onError(Exception e) {
-                Log.i(TAG, "onError: ");
+                Log.i(TAG, "onError: " + e.getLocalizedMessage());
+                showProgress(HIDE);
+                showCautionMessage(e.getLocalizedMessage());
             }
         });
+    }
+
+    private void showShareBtn() {
+        if (shareBtn.getVisibility() != View.VISIBLE)
+            shareBtn.setVisibility(View.VISIBLE);
+    }
+
+    @OnClick(R.id.shareBtn)
+    public void onShareClicked(){
+        mListener.shareImage(this.capturedImagePath);
     }
 
     @Override
@@ -322,6 +341,6 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
     }
 
     public interface OnFragmentInteractionListener {
-
+        void shareImage(String imagePath);
     }
 }

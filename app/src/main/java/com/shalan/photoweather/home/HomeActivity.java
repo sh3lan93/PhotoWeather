@@ -155,4 +155,9 @@ public class HomeActivity extends BaseActivity implements HomeViewInteractor
                         , WeatherInfoFragment.TAG)
                 .addToBackStack(HomeActivity.class.getSimpleName()).commit();
     }
+
+    @Override
+    public void shareImage(String imagePath) {
+
+    }
 }

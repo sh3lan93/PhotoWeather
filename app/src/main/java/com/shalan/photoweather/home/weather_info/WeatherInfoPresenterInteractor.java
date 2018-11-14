@@ -7,4 +7,5 @@ public interface WeatherInfoPresenterInteractor<V extends WeatherInfoViewInterac
     void forceRequestPermission(int permissionID);
     void requestWeatherData(double lat, double lng);
     void deleteExistsFile(String imagePath);
+    void saveImageToHistory(String imagePath);
 }

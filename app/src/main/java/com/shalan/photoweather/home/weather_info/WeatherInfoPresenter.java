@@ -41,6 +41,14 @@ public class WeatherInfoPresenter<V extends WeatherInfoViewInteractor> extends B
     }
 
     @Override
+    public void saveImageToHistory(String imagePath) {
+        String name = imagePath.replace(".jpg", "");
+        String [] arr = name.split("_");
+        name = arr[1] + "_" + arr[2];
+        getDataManager().insertNewHistoryRecord(name, imagePath);
+    }
+
+    @Override
     public void getDataSuccess(WeatherDataBaseModel weatherDataBaseModel) {
         getBaseViewInteractor().publishWeatherData(weatherDataBaseModel);
     }

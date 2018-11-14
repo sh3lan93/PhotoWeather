@@ -51,8 +51,8 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
     private String capturedImagePath;
     private WeatherInfoPresenter<WeatherInfoViewInteractor> presenter;
     private FusedLocationProviderClient mFusedLocationClient;
-    private double userLat;
-    private double userLng;
+    private double userLat = -1;
+    private double userLng = -1;
 
     public WeatherInfoFragment() {
         // Required empty public constructor
@@ -103,6 +103,10 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
         cautionMessage.setVisibility(View.VISIBLE);
     }
 
+    private void hideCautionMessage(){
+        cautionMessage.setVisibility(View.GONE);
+    }
+
     private void showProgress(int state) {
         if (state == SHOW) {
             if (loadingProgressBar.getVisibility() != View.VISIBLE)
@@ -141,6 +145,19 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
     protected void noConnectionAvailable() {
         showProgress(HIDE);
         showCautionMessage(R.string.no_internet_connection_available_message);
+    }
+
+    @Override
+    protected void connectionAvailable() {
+        if (this.userLat != -1 && this.userLng != -1
+                && this.cautionMessage.getVisibility() == View.VISIBLE
+                && this.cautionMessage.getText().toString()
+                .equals(getString(R.string.no_internet_connection_available_message))
+                && loadingProgressBar.getVisibility() != View.VISIBLE){
+            hideCautionMessage();
+            showProgress(SHOW);
+            //TODO: Check if the weather data object is null if so make recall
+        }
     }
 
     @Override

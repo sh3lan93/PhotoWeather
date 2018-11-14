@@ -11,6 +11,7 @@ public abstract class BaseFragment extends Fragment implements PublishConnectivi
 
     protected abstract void initPresenter();
     protected abstract void noConnectionAvailable();
+    protected abstract void connectionAvailable();
 
     @Override
     public void onResume() {
@@ -29,5 +30,10 @@ public abstract class BaseFragment extends Fragment implements PublishConnectivi
     @Override
     public void onNoConnectionAvailable() {
         noConnectionAvailable();
+    }
+
+    @Override
+    public void onConnectionAvailable() {
+        connectionAvailable();
     }
 }

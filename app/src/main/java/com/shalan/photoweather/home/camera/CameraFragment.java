@@ -179,6 +179,11 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
 
     }
 
+    @Override
+    protected void connectionAvailable() {
+
+    }
+
     /*listener fired from permission request*/
     @Override
     public void onPermissionGranted(int permissionID) {

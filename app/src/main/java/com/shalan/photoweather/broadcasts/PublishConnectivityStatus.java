@@ -18,10 +18,13 @@ public class PublishConnectivityStatus extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals(CONNECTIVITY_STATUS_ACTION_NAME) && !intent.getBooleanExtra(CONNECTIVITY_AVAILABLE_KEY, false)) {
             publishResult.onNoConnectionAvailable();
+        }else {
+            publishResult.onConnectionAvailable();
         }
     }
 
     public interface PublishResult {
         void onNoConnectionAvailable();
+        void onConnectionAvailable();
     }
 }

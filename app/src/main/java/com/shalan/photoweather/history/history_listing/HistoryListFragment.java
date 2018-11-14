@@ -17,6 +17,9 @@ import com.shalan.photoweather.PhotoWeatherApp;
 import com.shalan.photoweather.R;
 import com.shalan.photoweather.base.BaseFragment;
 import com.shalan.photoweather.data.AppDataManager;
+import com.shalan.photoweather.data.realm_models.HistoryModel;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,6 +35,7 @@ public class HistoryListFragment extends BaseFragment implements HistoryListFrag
 
     @BindView(R.id.historyRecycler)
     RecyclerView historyRecycler;
+    private List<HistoryModel> historyList;
 
     public HistoryListFragment() {
         // Required empty public constructor
@@ -59,7 +63,7 @@ public class HistoryListFragment extends BaseFragment implements HistoryListFrag
         ButterKnife.bind(this, view);
         historyRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         historyRecycler.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-
+        this.historyList = presenter.getHistories();
     }
 
     @Override

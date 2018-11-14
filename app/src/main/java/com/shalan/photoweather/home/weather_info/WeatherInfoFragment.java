@@ -2,6 +2,13 @@ package com.shalan.photoweather.home.weather_info;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -26,9 +33,13 @@ import com.shalan.photoweather.utils.AppDialogs;
 import com.shalan.photoweather.utils.AskForPermission;
 import com.shalan.photoweather.utils.Utils;
 import com.squareup.picasso.Callback;
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,6 +53,7 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
     private static final String IMAGE_FILE_PATH = "capturedImagePath";
     private static final int SHOW = 1;
     private static final int HIDE = 2;
+    private static final float DRAWING_TEXT_SIZE = 12f;
     @BindView(R.id.capturedImage)
     ImageView capturedImage;
     @BindView(R.id.cautionMessage)
@@ -105,7 +117,7 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
         cautionMessage.setVisibility(View.VISIBLE);
     }
 
-    private void hideCautionMessage(){
+    private void hideCautionMessage() {
         cautionMessage.setVisibility(View.GONE);
     }
 
@@ -118,6 +130,59 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
                 loadingProgressBar.setVisibility(View.GONE);
         }
 
+    }
+
+    private void drawWeatherData(Bitmap capturedImageBitmap) {
+        Bitmap newBitmap = capturedImageBitmap.copy(Bitmap.Config.ARGB_8888, true);
+        FileOutputStream outputStream = null;
+        Canvas canvas = new Canvas(newBitmap);
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setColor(Color.WHITE);
+        paint.setTextSize(DRAWING_TEXT_SIZE);
+//        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.OVERLAY));
+
+//        canvas.drawBitmap(newBitmap, 0, 0, paint);
+        canvas.drawText(weatherData.getName(), 10, 10, paint);
+
+        File newModifiedCapturedImage = new File(this.capturedImagePath);
+        if (!newModifiedCapturedImage.exists()) {
+            try {
+                newModifiedCapturedImage.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            outputStream = new FileOutputStream(newModifiedCapturedImage);
+            newBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Log.i(TAG, "drawWeatherData: " + e.getLocalizedMessage());
+        } finally {
+            if (outputStream != null) {
+                try {
+                    outputStream.flush();
+                    outputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                loadImageFile();
+            }
+        }
+    }
+
+    private void loadImageFile() {
+        Picasso.get().load(new File(this.capturedImagePath)).memoryPolicy(MemoryPolicy.NO_CACHE).into(this.capturedImage, new Callback() {
+            @Override
+            public void onSuccess() {
+                Log.i(TAG, "onSuccess: ");
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.i(TAG, "onError: ");
+            }
+        });
     }
 
     @Override
@@ -155,7 +220,7 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
                 && this.cautionMessage.getVisibility() == View.VISIBLE
                 && this.cautionMessage.getText().toString()
                 .equals(getString(R.string.no_internet_connection_available_message))
-                && loadingProgressBar.getVisibility() != View.VISIBLE && this.weatherData == null){
+                && loadingProgressBar.getVisibility() != View.VISIBLE && this.weatherData == null) {
             hideCautionMessage();
             showProgress(SHOW);
             presenter.requestWeatherData(this.userLat, this.userLng);
@@ -194,6 +259,10 @@ public class WeatherInfoFragment extends BaseFragment implements WeatherInfoView
     @Override
     public void publishWeatherData(WeatherDataBaseModel baseModel) {
         this.weatherData = baseModel;
+        //TODO: try to extract data and draw it on the image
+        presenter.deleteExistsFile(this.capturedImagePath);
+        Bitmap imageBitmap = ((BitmapDrawable) this.capturedImage.getDrawable()).getBitmap();
+        drawWeatherData(imageBitmap);
     }
 
     @Override

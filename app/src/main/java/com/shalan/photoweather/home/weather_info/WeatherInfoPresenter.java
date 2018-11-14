@@ -8,6 +8,8 @@ import com.shalan.photoweather.data.models.WeatherDataBaseModel;
 import com.shalan.photoweather.network.network_listeners.BaseResponseListener;
 import com.shalan.photoweather.utils.Utils;
 
+import java.io.File;
+
 public class WeatherInfoPresenter<V extends WeatherInfoViewInteractor> extends BasePresenter<V> implements WeatherInfoPresenterInteractor<V>,BaseResponseListener<WeatherDataBaseModel> {
 
     public static final String TAG = WeatherInfoPresenter.class.getSimpleName();
@@ -29,6 +31,13 @@ public class WeatherInfoPresenter<V extends WeatherInfoViewInteractor> extends B
     @Override
     public void requestWeatherData(double lat, double lng) {
         getDataManager().getWeatherData(lat, lng, this);
+    }
+
+    @Override
+    public void deleteExistsFile(String imagePath) {
+        File imageFile = new File(imagePath);
+        if (imageFile.exists())
+            imageFile.delete();
     }
 
     @Override

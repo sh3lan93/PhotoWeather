@@ -15,6 +15,8 @@ import android.view.ViewGroup;
 
 import com.shalan.photoweather.PhotoWeatherApp;
 import com.shalan.photoweather.R;
+import com.shalan.photoweather.adapter.HistoryAdapter;
+import com.shalan.photoweather.adapter.HistoryDiffCallback;
 import com.shalan.photoweather.base.BaseFragment;
 import com.shalan.photoweather.data.AppDataManager;
 import com.shalan.photoweather.data.realm_models.HistoryModel;
@@ -36,6 +38,8 @@ public class HistoryListFragment extends BaseFragment implements HistoryListFrag
     @BindView(R.id.historyRecycler)
     RecyclerView historyRecycler;
     private List<HistoryModel> historyList;
+    private HistoryDiffCallback diffCallback;
+    private HistoryAdapter adapter;
 
     public HistoryListFragment() {
         // Required empty public constructor
@@ -64,6 +68,11 @@ public class HistoryListFragment extends BaseFragment implements HistoryListFrag
         historyRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         historyRecycler.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         this.historyList = presenter.getHistories();
+
+        diffCallback = new HistoryDiffCallback();
+        adapter = new HistoryAdapter(diffCallback);
+        adapter.submitList(this.historyList);
+        historyRecycler.setAdapter(adapter);
     }
 
     @Override

@@ -122,7 +122,8 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
 
     @OnClick(R.id.history)
     public void onHistoryClicked() {
-
+        if (mListener != null)
+            mListener.onHistoryClicked();
     }
 
     @Override
@@ -273,5 +274,6 @@ public class CameraFragment extends BaseFragment implements CameraViewInteractor
 
     public interface OnFragmentInteractionListener {
         void onFinishCapturingImage(File capturedImageFile);
+        void onHistoryClicked();
     }
 }

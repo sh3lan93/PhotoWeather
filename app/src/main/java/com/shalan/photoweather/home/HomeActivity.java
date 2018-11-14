@@ -15,6 +15,7 @@ import com.shalan.photoweather.PhotoWeatherApp;
 import com.shalan.photoweather.R;
 import com.shalan.photoweather.base.BaseActivity;
 import com.shalan.photoweather.data.AppDataManager;
+import com.shalan.photoweather.history.HistoryActivity;
 import com.shalan.photoweather.home.camera.CameraFragment;
 import com.shalan.photoweather.home.weather_info.WeatherInfoFragment;
 import com.shalan.photoweather.utils.AskForPermission;
@@ -156,6 +157,12 @@ public class HomeActivity extends BaseActivity implements HomeViewInteractor
                 .replace(R.id.container, WeatherInfoFragment.newInstance(capturedImageFile.getPath())
                         , WeatherInfoFragment.TAG)
                 .addToBackStack(HomeActivity.class.getSimpleName()).commit();
+    }
+
+    @Override
+    public void onHistoryClicked() {
+        Intent intent = new Intent(this, HistoryActivity.class);
+        startActivity(intent);
     }
 
     @Override

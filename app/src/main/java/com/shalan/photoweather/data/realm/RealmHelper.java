@@ -5,6 +5,7 @@ import com.shalan.photoweather.data.realm_models.HistoryModel;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 public class RealmHelper implements RealmHelperInteractor {
 
@@ -25,6 +26,6 @@ public class RealmHelper implements RealmHelperInteractor {
 
     @Override
     public RealmResults<HistoryModel> getAllHistoryRecords() {
-        return Realm.getDefaultInstance().where(HistoryModel.class).findAll();
+        return Realm.getDefaultInstance().where(HistoryModel.class).findAll().sort("name", Sort.DESCENDING);
     }
 }

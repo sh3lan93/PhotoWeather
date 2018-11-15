@@ -27,7 +27,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class HistoryListFragment extends BaseFragment implements HistoryListFragmentViewInteractor{
+public class HistoryListFragment extends BaseFragment implements HistoryListFragmentViewInteractor, HistoryAdapter.HistoryListener {
 
     public static final String TAG = HistoryListFragment.class.getSimpleName();
 
@@ -67,11 +67,9 @@ public class HistoryListFragment extends BaseFragment implements HistoryListFrag
         ButterKnife.bind(this, view);
         historyRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         historyRecycler.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-        this.historyList = presenter.getHistories();
 
         diffCallback = new HistoryDiffCallback();
-        adapter = new HistoryAdapter(diffCallback);
-        adapter.submitList(this.historyList);
+        adapter = new HistoryAdapter(diffCallback, this);
         historyRecycler.setAdapter(adapter);
     }
 
@@ -79,6 +77,8 @@ public class HistoryListFragment extends BaseFragment implements HistoryListFrag
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initPresenter();
+        this.historyList = presenter.getHistories();
+        adapter.submitList(this.historyList);
     }
 
     @Override
@@ -114,8 +114,14 @@ public class HistoryListFragment extends BaseFragment implements HistoryListFrag
 
     }
 
+    @Override
+    public void onHistoryClicked(String imagePath) {
+        if (mListener != null)
+            mListener.onHistoryItemClicked(imagePath);
+    }
+
 
     public interface OnFragmentInteractionListener {
-
+        void onHistoryItemClicked(String imagePath);
     }
 }

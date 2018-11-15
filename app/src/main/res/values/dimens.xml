@@ -2,4 +2,7 @@
 <resources>
     <dimen name="caution_message_margin">8dp</dimen>
     <dimen name="camera_option_holder_height">100dp</dimen>
+    <dimen name="def_padding">10dp</dimen>
+    <dimen name="small_pic_size">50dp</dimen>
+    <dimen name="def_margin_start">8dp</dimen>
 </resources>

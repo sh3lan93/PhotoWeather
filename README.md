@@ -15,7 +15,7 @@ Simple app to take a picture, get weather information from [open weather api](ht
 
 ## Important notes
 - This app uses [Camera 2 api](https://developer.android.com/reference/android/hardware/camera2/package-summary)
-- This app user [Realm](https://realm.io/) for local data saving
+- This app uses [Realm](https://realm.io/) for local data saving
 
 ## App permissions
 - Camera

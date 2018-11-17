@@ -7,3 +7,17 @@ Simple app to take a picture, get weather information from [open weather api](ht
 - [Android Assests Studio](https://romannurik.github.io/AndroidAssetStudio/index.html)
 - Postman
 - Json2POJO android studio plugin
+
+## SDK versions
+- minSdkVersion 21 
+- targetSdkVersion 28
+- compileSdkVersion 28
+
+## Important notes
+- This app uses [Camera 2 api](https://developer.android.com/reference/android/hardware/camera2/package-summary)
+- This app user [Realm](https://realm.io/) for local data saving
+
+## App permissions
+- Camera
+- Write to external storage 
+- Location

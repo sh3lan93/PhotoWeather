@@ -1,3 +1,5 @@
+[![codebeat badge](https://codebeat.co/badges/9a7b3ee7-e96a-4775-a7af-3438827fe954)](https://codebeat.co/projects/github-com-sh3lan93-counterview-master)
+
 # PhotoWeather
 Simple app to take a picture, get weather information from [open weather api](https://openweathermap.org/), draw weather information on captured image, share modified version of captured image (that hold weather inofrmation) and have a history for your modified captured images. 
 
